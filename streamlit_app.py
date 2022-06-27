@@ -1,6 +1,7 @@
 from subprocess import call
 import streamlit as st
 import tensorflow as tf
+import numpy as np
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications.inception_v3 import preprocess_input
 from PIL import Image
@@ -24,7 +25,7 @@ with st.spinner('Loading Model Into Memory....'):
 
 food_list = ['samosa','pizza','omelette']
 
-uploaded_file = st.file_uploader("Upload Food Image to Classify....")
+img_file_buffer = st.file_uploader("Upload Food Image to Classify....")
 
 def processing(model, image):
   IMG_SIZE=[229,229]
@@ -40,8 +41,6 @@ def processing(model, image):
   img = np.expand_dims(img, axis=0) 
   img = preprocess_input(img)
   return img
-
-img_file_buffer = st.file_uploader("Upload Dog Image to Classify....")
 
 if img_file_buffer  is not None:
     image = img_file_buffer
