@@ -4,3 +4,4 @@ tensorflow
 gdown
 pillow
 requests
+opencv-python

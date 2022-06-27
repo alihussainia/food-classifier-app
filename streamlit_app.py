@@ -2,79 +2,59 @@ from subprocess import call
 import streamlit as st
 import tensorflow as tf
 import numpy as np
-from tensorflow.keras.preprocessing import image
-from tensorflow.keras.applications.inception_v3 import preprocess_input
-from PIL import Image
 import requests
-from io import BytesIO
-import gdown
-import os
+import cv2
+from tensorflow.keras.applications.inception_v3 import preprocess_input
 
-# Requirements:
-# People can upload or simply enter the URL of image using streamlit
-# then we can convert the image to the required format of predict_class function.
-# plus to save the image
-
-
-# downloading google drive
 @st.cache(allow_output_mutation=True)
 def downloading_model():
   call('gdown --id 1FgnD8ixlLscDvFCHuq99TDYpMV66I-Mb',shell=True)
 
 downloading_model()
 
-# loading model
 @st.cache(allow_output_mutation=True)
 def load_model():
-    model = tf.keras.models.load_model('bestmodel_3class.hdf5',compile = False)
+    model = tf.keras.models.load_model('bestmodel_3class.hdf5', compile = False)
     return model
 
 with st.spinner('Loading Model Into Memory....'):
     model = load_model()
 
-# target classes
 food_list = ['samosa','pizza','omelette']
 
 path = st.text_input('Enter Image URL to Classify...')
-img_file_buffer = st.file_uploader("Upload Your Food Image...")
+img_file_buffer = st.file_uploader("Upload Your Image to Classify...")
 
-if img_file_buffer:
-    image = img_file_buffer
-    image_out = Image.open(img_file_buffer)
-    st.image(image_out, caption='Your Image', use_column_width=False, width=400)
-    image_out.save("input.jpg")
+if img_file_buffer is not None:
+    image = img_file_buffer.read()
+    np_arr = np.frombuffer(image, np.uint8)
+    # decode image
+    image_input = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+    image_input = cv2.cvtColor(image_input, cv2.COLOR_BGR2RGB)
+    st.image(image_input, caption='Your Image', use_column_width=False, width=400)
 else:
-  if path:
-      test_image = repr(path)
-      image_url_content = requests.get(test_image).content
-      image_out = Image.open(BytesIO(image_url_content))
-      st.image(image_out, caption='Your Image', use_column_width=False, width=400)
-      image_out.save("input.jpg")
-  else:
-      path=None
-      img_file_buffer=None
-
-print(os.listdir(os.curdir))
-# requires an img path -> img
-def preprocess_input_image(img):
-    img = image.load_img(img, target_size=(299, 299))
-    img = image.img_to_array(img)                    
-    img = np.expand_dims(img, axis=0)         
-    img = preprocess_input(img)                                      
-    return img
-
-def predict_output(model,img):
-  pred = model.predict(img)
-  index = np.argmax(pred)
-  food_list.sort()
-  pred_value = food_list[index]
-    
-if st.button('Submit'):
-    if img_file_buffer is None and path is None:
-        st.error("Please Upload Your Image")
+    if path:
+        test_image = repr(path)
     else:
-      with st.spinner('classifying.....'):
-          img = './input.jpg'
-          img = preprocess_input_image(img)
-          pred_value=predict_output(model,img)
-          st.write(pred_value)    
+        test_image = r'https://github.com/alihussainia/AI-Makerspace/raw/master/AI-GKE-Autopilot/images/pizza.jpg'
+    image_input = requests.get(test_image, stream=True).raw
+    image_input = np.asarray(bytearray(image_input.read()), dtype="uint8")
+    image_input = cv2.imdecode(image_input, cv2.IMREAD_COLOR)
+    image_input = cv2.cvtColor(image_input, cv2.COLOR_BGR2RGB)
+    st.image(image_input, caption='Your Image', use_column_width=False, width=400)
+
+
+def predict_class(model, img):
+    img = np.expand_dims(img, axis=0)
+    img = preprocess_input(img)
+    pred = model.predict(img)
+    index = np.argmax(pred)
+    food_list.sort()
+    pred_value = food_list[index]
+    return pred_value
+
+
+st.write("Predicted Class :")
+with st.spinner('classifying.....'):
+    st.write(predict_class(model, image_input))
+st.write("")
