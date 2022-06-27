@@ -66,9 +66,6 @@ else:
 
 st.write("Predicted Class :")
 with st.spinner('classifying.....'):
-
-st.write("Predicted Class :")
-with st.spinner('classifying.....'):
     index =np.argmax(model.predict(processing(image)),axis=1)
     food_list.sort()
     pred_value = food_list[index]
