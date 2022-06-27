@@ -53,13 +53,6 @@ else:
       path=None
       img_file_buffer=None
       
-def read_image(image,IMG_SIZE=[229,229]):
-      raw = tf.io.read_file(image)
-      image = tf.image.decode_jpeg(raw, channels=3, dct_method='INTEGER_ACCURATE')
-      image = tf.image.resize(image,IMG_SIZE, method='nearest')
-      image = tf.cast(image, 'float32')
-      return np.array(image)
-    
 # requires an img path -> img
 def preprocess_input_image(img):
     img = image.load_img(img, target_size=(299, 299))
@@ -79,7 +72,7 @@ if st.button('Submit'):
         st.error("Please Upload Your Image")
     else:
       with st.spinner('classifying.....'):
-          img = read_image('input.jpg')
+          img = 'input.jpg'
           img = preprocess_input_image(img)
           pred_value=predict_output(model,img)
           st.write(pred_value)    
