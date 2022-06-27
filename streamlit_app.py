@@ -82,5 +82,3 @@ if st.button('Submit'):
           img = preprocess_input_image('usr_data/input.jpg')
           pred_value=predict_output(model,img)
           st.write(pred_value)    
-st.write("")
-st.image(image_out, caption='Classifying Food Image', use_column_width=True)
