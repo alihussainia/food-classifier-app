@@ -27,7 +27,7 @@ food_list = ['samosa','pizza','omelette']
 
 img_file_buffer = st.file_uploader("Upload Food Image to Classify....")
 
-def processing(model, image):
+def processing(image):
   IMG_SIZE=[229,229]
 
   def read_image(image,IMG_SIZE):
