@@ -41,14 +41,14 @@ if img_file_buffer:
     image = img_file_buffer
     image_out = Image.open(img_file_buffer)
     st.image(image_out, caption='Your Image', use_column_width=False, width=400)
-    image_out.save("usr_data/input.jpg")
+    image_out.save("input.jpg")
 else:
   if path:
       test_image = repr(path)
       image_url_content = requests.get(test_image).content
       image_out = Image.open(BytesIO(image_url_content))
       st.image(image_out, caption='Your Image', use_column_width=False, width=400)
-      image_out.save("usr_data/input.jpg")
+      image_out.save("input.jpg")
   else:
       path=None
       img_file_buffer=None
@@ -79,6 +79,7 @@ if st.button('Submit'):
         st.error("Please Upload Your Image")
     else:
       with st.spinner('classifying.....'):
-          img = preprocess_input_image('usr_data/input.jpg')
+          img = read_image('input.jpg')
+          img = preprocess_input_image(img)
           pred_value=predict_output(model,img)
           st.write(pred_value)    
