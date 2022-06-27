@@ -9,12 +9,20 @@ import requests
 from io import BytesIO
 import gdown
 
+# Requirements:
+# People can upload or simply enter the URL of image using streamlit
+# then we can convert the image to the required format of predict_class function.
+# plus to save the image
+
+
+# downloading google drive
 @st.cache(allow_output_mutation=True)
 def downloading_model():
   call('gdown --id 1FgnD8ixlLscDvFCHuq99TDYpMV66I-Mb',shell=True)
 
 downloading_model()
 
+# loading model
 @st.cache(allow_output_mutation=True)
 def load_model():
     model = tf.keras.models.load_model('bestmodel_3class.hdf5',compile = False)
@@ -23,39 +31,56 @@ def load_model():
 with st.spinner('Loading Model Into Memory....'):
     model = load_model()
 
+# target classes
 food_list = ['samosa','pizza','omelette']
 
-img_file_buffer = st.file_uploader("Upload Food Image to Classify....")
+path = st.text_input('Enter Image URL to Classify...')
+img_file_buffer = st.file_uploader("Upload Your Food Image...")
 
-def processing(image):
-  IMG_SIZE=[229,229]
-
-  def read_image(image,IMG_SIZE):
+if img_file_buffer:
+    image = img_file_buffer
+    image_out = Image.open(img_file_buffer)
+    st.image(image_out, caption='Your Image', use_column_width=False, width=400)
+    image_out.save("usr_data/input.jpg")
+else:
+  if path:
+      test_image = repr(path)
+      image_url_content = requests.get(test_image).content
+      image_out = Image.open(BytesIO(image_url_content))
+      st.image(image_out, caption='Your Image', use_column_width=False, width=400)
+      image_out.save("usr_data/input.jpg")
+  else:
+      path=None
+      img_file_buffer=None
+      
+def read_image(image,IMG_SIZE=[229,229]):
       raw = tf.io.read_file(image)
       image = tf.image.decode_jpeg(raw, channels=3, dct_method='INTEGER_ACCURATE')
       image = tf.image.resize(image,IMG_SIZE, method='nearest')
       image = tf.cast(image, 'float32')
       return np.array(image)
-  
-  img = read_image(img_file_buffer,IMG_SIZE)
-  img = np.expand_dims(img, axis=0) 
-  img = preprocess_input(img)
-  return img
+    
+# requires an img path -> img
+def preprocess_input_image(img):
+    img = image.load_img(img, target_size=(299, 299))
+    img = image.img_to_array(img)                    
+    img = np.expand_dims(img, axis=0)         
+    img = preprocess_input(img)                                      
+    return img
 
-if img_file_buffer  is not None:
-    image = img_file_buffer
-    image_out = Image.open(img_file_buffer)
-    image = image.getvalue()
-else:
-    test_image = 'https://github.com/alihussainia/AI-Makerspace/raw/master/AI-GKE-Autopilot/images/pizza.jpg'
-    image = requests.get(test_image).content
-    image_out = Image.open(BytesIO(image))
-
-st.write("Predicted Class :")
-with st.spinner('classifying.....'):
-    index =np.argmax(model.predict(processing(image)),axis=1)
-    food_list.sort()
-    pred_value = food_list[index]
-    st.write(pred_value)    
+def predict_output(model,img):
+  pred = model.predict(img)
+  index = np.argmax(pred)
+  food_list.sort()
+  pred_value = food_list[index]
+    
+if st.button('Submit'):
+    if img_file_buffer is None and path is None:
+        st.error("Please Upload Your Image")
+    else:
+      with st.spinner('classifying.....'):
+          img = preprocess_input_image('usr_data/input.jpg')
+          pred_value=predict_output(model,img)
+          st.write(pred_value)    
 st.write("")
 st.image(image_out, caption='Classifying Food Image', use_column_width=True)
