@@ -54,7 +54,7 @@ else:
       path=None
       img_file_buffer=None
 
-st.write(f'(os.listdir($(pwd))}')
+st.write(f'{os.listdir($(pwd))}')
 # requires an img path -> img
 def preprocess_input_image(img):
     img = image.load_img(img, target_size=(299, 299))
