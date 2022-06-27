@@ -74,7 +74,7 @@ if st.button('Submit'):
         st.error("Please Upload Your Image")
     else:
       with st.spinner('classifying.....'):
-          img = st.upload.read('input.jpg')
+          img = './input.jpg'
           img = preprocess_input_image(img)
           pred_value=predict_output(model,img)
           st.write(pred_value)    
