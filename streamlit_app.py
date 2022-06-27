@@ -37,7 +37,7 @@ def processing(image):
       image = tf.cast(image, 'float32')
       return np.array(image)
   
-  img = read_image(uploaded_file,IMG_SIZE)
+  img = read_image(img_file_buffer,IMG_SIZE)
   img = np.expand_dims(img, axis=0) 
   img = preprocess_input(img)
   return img
