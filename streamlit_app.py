@@ -34,7 +34,7 @@ if img_file_buffer is not None:
     st.image(image_input, caption='Your Image', use_column_width=False, width=400)
 else:
     if path:
-        test_image = repr(path)
+        test_image = path
     else:
         test_image = r'https://github.com/alihussainia/AI-Makerspace/raw/master/AI-GKE-Autopilot/images/pizza.jpg'
     image_input = requests.get(test_image, stream=True).raw
