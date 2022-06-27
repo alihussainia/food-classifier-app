@@ -1,17 +1,5 @@
 from subprocess import call
-call('pip install streamlit',shell=True)
-
 import streamlit as st
-@st.cache(allow_output_mutation=True)
-def installing_reqs():
-  call('pip install numpy',shell=True)
-  call('pip install tensorflow-cpu',shell=True)
-  call('pip install gdown',shell=True)
-  call('pip install pillow',shell=True)
-  call('pip install requests',shell=True)
-  
-installing_reqs()
-
 import tensorflow as tf
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications.inception_v3 import preprocess_input
