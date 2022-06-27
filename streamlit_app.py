@@ -1,10 +1,12 @@
 from subprocess import call
 @st.cache(allow_output_mutation=True)
-  def installing_reqs():
-    call('pip install numpy',shell=True)
-    call('pip install streamlit',shell=True)
-    call('pip install tensorflow-cpu',shell=True)
-    call('pip install gdown',shell=True)
+def installing_reqs():
+  call('pip install numpy',shell=True)
+  call('pip install streamlit',shell=True)
+  call('pip install tensorflow-cpu',shell=True)
+  call('pip install gdown',shell=True)
+  
+installing_reqs()
 
 import streamlit as st
 import tensorflow as tf
