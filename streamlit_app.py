@@ -1,8 +1,15 @@
+from subprocess import call
+@st.cache(allow_output_mutation=True)
+  def installing_reqs():
+    call('pip install numpy',shell=True)
+    call('pip install streamlit',shell=True)
+    call('pip install tensorflow-cpu',shell=True)
+    call('pip install gdown',shell=True)
+
 import streamlit as st
 import tensorflow as tf
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications.inception_v3 import preprocess_input
-from subprocess import call
 
 @st.cache(allow_output_mutation=True)
 def downloading_model():
@@ -22,8 +29,8 @@ food_list = ['samosa','pizza','omelette']
 
 uploaded_file = st.file_uploader("Upload Food Image to Classify....")
 def predict_class(model, uploaded_file):
-  bytes_data = uploaded_file.getvalue()
-  img = image.load_img(bytes_data, target_size=(299, 299))
+  #bytes_data = uploaded_file.getvalue()
+  img = image.load_img(uploaded_file, target_size=(299, 299))
   img = image.img_to_array(img)
   img = np.expand_dims(img, axis=0) 
   img = preprocess_input(img) 
