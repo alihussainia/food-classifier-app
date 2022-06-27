@@ -18,7 +18,7 @@ def load_model():
 with st.spinner('Loading Model Into Memory....'):
     model = load_model()
 
-food_list = ['samosa','pizza','omelette'
+food_list = ['samosa','pizza','omelette']
 
 uploaded_file = st.file_uploader("Upload Food Image to Classify....")
 def predict_class(model, uploaded_file):
