@@ -8,6 +8,7 @@ from PIL import Image
 import requests
 from io import BytesIO
 import gdown
+import os
 
 # Requirements:
 # People can upload or simply enter the URL of image using streamlit
@@ -52,7 +53,8 @@ else:
   else:
       path=None
       img_file_buffer=None
-      
+
+st.write(f'(os.listdir($(pwd))}')
 # requires an img path -> img
 def preprocess_input_image(img):
     img = image.load_img(img, target_size=(299, 299))
@@ -72,7 +74,7 @@ if st.button('Submit'):
         st.error("Please Upload Your Image")
     else:
       with st.spinner('classifying.....'):
-          img = 'input.jpg'
+          img = st.upload.read('input.jpg')
           img = preprocess_input_image(img)
           pred_value=predict_output(model,img)
           st.write(pred_value)    
